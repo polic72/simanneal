@@ -7,10 +7,32 @@ public static class Program
 {
     public static void Main(string[] args)
     {
-        double x = 
+        double x = 1.5;
+        double d = -5;
 
-        Console.WriteLine("Hello, World!");
+        Console.WriteLine(MachineEpsilon);
+        Console.WriteLine("f(" + x + ") = " + f(x) + ", f'(" + x + ") = " + deriv(f, x));
+
+
+        //Start the simulated annealing algorithm test.
     }
+
+
+
+
+
+
+
+
+    public static double SimAnn()
+    {
+    }
+
+
+
+
+
+
 
 
     public static double f(double x)
@@ -22,5 +44,37 @@ public static class Program
     public static double deriv(Func<double, double> f, double x, double h)
     {
         return (f(x + h) - f(x - h)) / (2 * h);
+    }
+
+    public static double deriv(Func<double, double> f, double x)
+    {
+        return deriv(f, x, ME_Sqrt * x);
+    }
+
+
+    public static readonly double ME_Sqrt = Math.Sqrt(MachineEpsilon);
+
+    private static double? m_e = null;
+
+    public static double MachineEpsilon
+    {
+        get
+        {
+            if (m_e.HasValue)
+            {
+                return m_e.Value;
+            }
+
+
+            m_e = 1;
+
+            do
+            {
+                m_e /= 2;
+            } while (1 + m_e/2 != 1);
+
+            //m_e *= 2;
+            return m_e.Value;
+        }
     }
 }
