@@ -15,6 +15,11 @@ public static class Program
 
 
         //Start the simulated annealing algorithm test.
+        int max_iterations = int.Parse(args[0]);
+        double initial_temperature = double.Parse(args[1]);
+        double best_x = SimAnn(x, max_iterations, initial_temperature, -2, 2, new Random(1));
+
+        Console.WriteLine("f(" + best_x + ") = " + f(best_x) + ", f'(" + best_x + ") = " + deriv(f, best_x));
     }
 
 
@@ -24,8 +29,55 @@ public static class Program
 
 
 
-    public static double SimAnn()
+    public static double SimAnn(double initial_x, int max_iterations, double starting_temp, double min, double max, Random random)
     {
+        double current_guess = initial_x;
+        for (int i = 0; i < max_iterations; ++i)
+        {
+            double temp = Temperature(starting_temp, 1.0 - (i + 1.0) / max_iterations);
+            double neighbor = NextNeighbor(f, current_guess, min, max, random);
+
+            double e_current = Enegery(f, current_guess, -5);
+            double e_neighbor = Enegery(f, neighbor, -5);
+
+            double allowance = random.NextDouble();
+
+            if (AcceptanceProbability(e_current, e_neighbor, temp) >= allowance)
+            {
+                current_guess = neighbor;
+            }
+
+            //Console.WriteLine(temp);
+        }
+
+        return current_guess;
+    }
+
+
+    public static double Temperature(double max, double t)
+    {
+        return max * t;
+    }
+
+    public static double NextNeighbor(Func<double, double> f, double current, double min, double max, Random random)
+    {
+        double rand = random.NextDouble();
+        return f((1 - rand) * min + rand * max);
+    }
+
+    public static double Enegery(Func<double, double> f, double current, double desired_output)
+    {
+        return Math.Abs(desired_output - f(current));
+    }
+
+    public static double AcceptanceProbability(double energy_current, double energy_new, double temp)
+    {
+        if (energy_new < energy_current)
+        {
+            return 1;
+        }
+
+        return Math.Exp(-(energy_new - energy_current) / temp);
     }
 
 
