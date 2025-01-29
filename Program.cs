@@ -61,8 +61,32 @@ public static class Program
 
     public static double NextNeighbor(Func<double, double> f, double current, double min, double max, Random random)
     {
-        double rand = random.NextDouble();
-        return f((1 - rand) * min + rand * max);
+        //double rand = random.NextDouble();
+        //return f((1 - rand) * min + rand * max);
+
+        //double rand = random.NextDouble();
+        //return (1 - rand) * min + rand * max;
+
+
+
+
+
+
+
+
+        double rand = random.NextDouble() - .5;
+
+        double possible_next = rand + current;
+        if (possible_next < min)
+        {
+            possible_next = min;
+        }
+        else if (possible_next > max)
+        {
+            possible_next = max;
+        }
+
+        return possible_next;
     }
 
     public static double Enegery(Func<double, double> f, double current, double desired_output)
